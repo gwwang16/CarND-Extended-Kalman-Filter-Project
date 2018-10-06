@@ -60,20 +60,16 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float c3 = (c1*c2);
 
   // check zero den
-  if(fabs(c1) < 0.0001){
+  if(fabs(c1) < 0.001){
     cout << "CalculateJacobian () - Error - Division by Zero." << endl;
     return Hj;
   }
 
   // compute the Jacobian matrix
-  Hj(0,0) = px/c2;
-  Hj(0,1) = py/c2;
-  Hj(1,0) = -py/c1;
-  Hj(1,1) = px/c1;
-  Hj(2,0) = py*(vx*py-vy*px)/c3;
-  Hj(2,1) = px*(vy*px-vx*py)/c3;
-  Hj(2,2) = px/c2;
-  Hj(2,3) = py/c2;
+  // all cells of Hj must be initialized first, can not use H(a,b) here.
+  Hj << px/c2,        py/c2,        0,        0,
+        -py/c1,       px/c1,        0,        0,
+        py*(vx*py-vy*px)/c3, px*(vy*px-vx*py)/c3, px/c2, py/c2;
 
   return Hj;
 }

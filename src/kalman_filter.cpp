@@ -3,6 +3,9 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+#include <iostream>
+using namespace std;
+
 // Please note that the Eigen library does not initialize 
 // VectorXd or MatrixXd objects with zeros upon creation.
 
@@ -28,6 +31,12 @@ void KalmanFilter::Predict() {
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
+
+  cout << "Predict state: " << endl;
+  cout << "F_: " << F_ << endl;
+  cout << "x_: " << x_ << endl;
+  cout << "P_ " << P_ << endl;
+
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
@@ -47,6 +56,10 @@ void KalmanFilter::Update(const VectorXd &z) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
+
+  cout << "KF Update state: " << endl;
+  cout << "x_: " << x_ << endl;
+  cout << "P_ " << P_ << endl;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -63,8 +76,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   float rho = sqrt(px*px + py*py);
   float phi = atan2(py, px);
   float rho_dot;
-  if(fabs(rho) < 0.0001){
-    rho_dot = 0;
+  if(fabs(rho) < 0.001){
+    px = 0.001;
+    py = 0.001;
   } else{
     rho_dot = (px*vx+py*vy)/rho;
   }
@@ -75,21 +89,28 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd y = z - z_pred;
 
   // normalize the angle of y vector into +-pi
-  while(y(1)>2*M_PI){
-    y(1) -= 2*M_PI;
-  }
-  while(y(1)<-2*M_PI){
-    y(1) += 2*M_PI;
-  }
+  while(y(1) > M_PI){y(1) -= 2*M_PI;}
+  while(y(1) < -M_PI){y(1) += 2*M_PI;}
 
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd K = P_ * Ht * Si;
 
+  cout << "EKF Update state: " << endl;
+  cout << "before update x_: " << x_ << endl;
+  cout << "P_ " << P_ << endl;
+  cout << "Hj_ " << H_ << endl;
+  cout << "Si_ " << Si << endl;
+  cout << "K " << K << endl;
+
   // estimate
   x_ = x_ + K*y;
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
+
+  cout << "EKF Update state: " << endl;
+  cout << "x_: " << x_ << endl;
+  cout << "P_ " << P_ << endl;
 }
