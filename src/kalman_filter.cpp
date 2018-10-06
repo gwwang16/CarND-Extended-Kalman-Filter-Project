@@ -32,10 +32,10 @@ void KalmanFilter::Predict() {
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
 
-  cout << "Predict state: " << endl;
-  cout << "F_: " << F_ << endl;
-  cout << "x_: " << x_ << endl;
-  cout << "P_ " << P_ << endl;
+  // cout << "Predict state: " << endl;
+  // cout << "F_: " << F_ << endl;
+  // cout << "x_: " << x_ << endl;
+  // cout << "P_ " << P_ << endl;
 
 }
 
@@ -57,9 +57,9 @@ void KalmanFilter::Update(const VectorXd &z) {
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 
-  cout << "KF Update state: " << endl;
-  cout << "x_: " << x_ << endl;
-  cout << "P_ " << P_ << endl;
+  // cout << "KF Update state: " << endl;
+  // cout << "x_: " << x_ << endl;
+  // cout << "P_ " << P_ << endl;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -97,12 +97,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd Si = S.inverse();
   MatrixXd K = P_ * Ht * Si;
 
-  cout << "EKF Update state: " << endl;
-  cout << "before update x_: " << x_ << endl;
-  cout << "P_ " << P_ << endl;
-  cout << "Hj_ " << H_ << endl;
-  cout << "Si_ " << Si << endl;
-  cout << "K " << K << endl;
+  // cout << "EKF Update state: " << endl;
+  // cout << "before update x_: " << x_ << endl;
+  // cout << "P_ " << P_ << endl;
+  // cout << "Hj_ " << H_ << endl;
+  // cout << "Si_ " << Si << endl;
+  // cout << "K " << K << endl;
 
   // estimate
   x_ = x_ + K*y;
@@ -110,7 +110,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 
-  cout << "EKF Update state: " << endl;
-  cout << "x_: " << x_ << endl;
-  cout << "P_ " << P_ << endl;
+  // cout << "EKF Update state: " << endl;
+  // cout << "x_: " << x_ << endl;
+  // cout << "P_ " << P_ << endl;
 }
